@@ -1,18 +1,22 @@
 import React from 'react';
-
+let countDown = 0;
 class App extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			initialDuration: 20,
 			initialBreak: 10,
-			initialSet: 1
+			initialSet: 1,
+			minutes: 0,
+			remSeconds: 0,
+			timeLeft: 0
 		};
 		this.handleDuration = this.handleDuration.bind(this);
 		this.handleBreak = this.handleBreak.bind(this);
 		this.handleSet = this.handleSet.bind(this);
 		this.handleStart = this.handleStart.bind(this);
 		this.handleInit = this.handleInit.bind(this);
+		this.handleDisplay = this.handleDisplay.bind(this);
 	}
 
 	handleDuration(e) {
@@ -63,9 +67,30 @@ class App extends React.Component {
 		}
 	}
 
-	handleDisplay(e) {}
+	handleStart(e) {
+		this.setState({
+			timeLeft: this.state.initialDuration * 60
+		});
+		countDown = setInterval(() => {
+			this.setState({
+				timeLeft: this.state.timeLeft - 1
+			});
+		}, 1000);
+		if (this.state.timeLeft < 0) {
+			clearInterval(countDown);
+		}
+		this.handleDisplay(this.state.timeLeft);
+	}
 
-	handleStart(e) {}
+	handleDisplay(seconds, e) {
+		let displayTime = document.querySelector('#time-left');
+		this.setState({ remSeconds: seconds % 60 });
+		if (this.state.timeLeft == -1) {
+			displayTime.textContent = `00:00`;
+		} else {
+			displayTime.textContent = `00:${this.state.remSeconds}`;
+		}
+	}
 
 	handleInit(e) {
 		this.setState({
@@ -112,7 +137,7 @@ class App extends React.Component {
 				<button onClick={this.handleInit}>Reset</button>
 				<div id="display">
 					<h2>Work</h2>
-					<span>00:00</span>
+					<span id="time-left">00:00</span>
 				</div>
 			</div>
 		);
