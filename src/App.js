@@ -1,5 +1,6 @@
 import React from 'react';
-let countDown = 0;
+let countDown,
+	bool = true;
 class App extends React.Component {
 	constructor(props) {
 		super(props);
@@ -7,9 +8,8 @@ class App extends React.Component {
 			initialDuration: 20,
 			initialBreak: 10,
 			initialSet: 1,
-			minutes: 0,
-			remSeconds: 0,
-			timeLeft: 0
+			timeLeft: 0,
+			i: 0
 		};
 		this.handleDuration = this.handleDuration.bind(this);
 		this.handleBreak = this.handleBreak.bind(this);
@@ -17,11 +17,12 @@ class App extends React.Component {
 		this.handleStart = this.handleStart.bind(this);
 		this.handleInit = this.handleInit.bind(this);
 		this.handleDisplay = this.handleDisplay.bind(this);
+		this.handleSwitch = this.handleSwitch.bind(this);
 	}
 
 	handleDuration(e) {
 		let { initialDuration } = this.state;
-		if (initialDuration > 0) {
+		if (initialDuration > 0 && initialDuration < 60) {
 			if (e.target.value === '+') {
 				this.setState({
 					initialDuration: initialDuration + 1
@@ -37,7 +38,7 @@ class App extends React.Component {
 
 	handleBreak(e) {
 		let { initialBreak } = this.state;
-		if (initialBreak > 0) {
+		if (initialBreak > 0 && initialBreak < 60) {
 			if (e.target.value === '+') {
 				this.setState({
 					initialBreak: initialBreak + 1
@@ -68,36 +69,67 @@ class App extends React.Component {
 	}
 
 	handleStart(e) {
-		this.setState({
-			timeLeft: this.state.initialDuration * 60
-		});
-		countDown = setInterval(() => {
+		if (this.state.initialSet > 0) {
+			if (this.state.i === 1) {
+				this.setState({
+					initialSet: this.state.initialSet - 1
+				});
+			}
+			let iterArray = [ this.state.initialDuration, this.state.initialBreak ];
 			this.setState({
-				timeLeft: this.state.timeLeft - 1
+				timeLeft: iterArray[this.state.i]
 			});
-		}, 1000);
-		if (this.state.timeLeft < 0) {
-			clearInterval(countDown);
+			countDown = setInterval(() => {
+				this.setState({
+					timeLeft: this.state.timeLeft - 1
+				});
+				if (this.state.timeLeft < 0) {
+					clearInterval(countDown);
+					if (this.state.timeLeft === -1) {
+						this.handleSwitch();
+					}
+				}
+				this.handleDisplay(this.state.timeLeft);
+			}, 1000);
 		}
-		this.handleDisplay(this.state.timeLeft);
 	}
 
-	handleDisplay(seconds, e) {
+	handleSwitch() {
+		bool = !bool;
+		if (!bool) {
+			this.setState({
+				i: 1
+			});
+			this.handleStart();
+		} else {
+			this.setState({
+				i: 0
+			});
+			this.handleStart();
+		}
+	}
+
+	handleDisplay(seconds) {
 		let displayTime = document.querySelector('#time-left');
-		this.setState({ remSeconds: seconds % 60 });
-		if (this.state.timeLeft == -1) {
+		if (this.state.timeLeft === -1) {
 			displayTime.textContent = `00:00`;
 		} else {
-			displayTime.textContent = `00:${this.state.remSeconds}`;
+			displayTime.textContent = `00:${seconds > 9 ? seconds : `0` + seconds}`;
 		}
 	}
 
 	handleInit(e) {
+		countDown = 0;
+		bool = true;
 		this.setState({
 			initialDuration: 20,
 			initialBreak: 10,
-			initialSet: 1
+			initialSet: 1,
+			timeLeft: 0,
+			i: 0
 		});
+		let displayTime = document.querySelector('#time-left');
+		displayTime.textContent = `00:${this.state.initialDuration}`;
 	}
 
 	render() {
@@ -137,6 +169,7 @@ class App extends React.Component {
 				<button onClick={this.handleInit}>Reset</button>
 				<div id="display">
 					<h2>Work</h2>
+					<div>{this.state.initialSet}</div>
 					<span id="time-left">00:00</span>
 				</div>
 			</div>
