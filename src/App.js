@@ -7,7 +7,7 @@ class App extends React.Component {
 		this.state = {
 			initialDuration: 20,
 			initialBreak: 10,
-			initialSet: 1,
+			initialSet: 0,
 			timeLeft: 0,
 			i: 0
 		};
@@ -54,7 +54,7 @@ class App extends React.Component {
 
 	handleSet(e) {
 		let { initialSet } = this.state;
-		if (initialSet > 0) {
+		if (initialSet >= 0) {
 			if (e.target.value === '+') {
 				this.setState({
 					initialSet: initialSet + 1
@@ -70,6 +70,7 @@ class App extends React.Component {
 
 	handleStart(e) {
 		if (this.state.initialSet > 0) {
+			console.log('Hello t');
 			if (this.state.i === 1) {
 				this.setState({
 					initialSet: this.state.initialSet - 1
@@ -110,11 +111,13 @@ class App extends React.Component {
 	}
 
 	handleDisplay(seconds) {
-		let displayTime = document.querySelector('#time-left');
-		if (this.state.timeLeft === -1) {
-			displayTime.textContent = `00:00`;
-		} else {
-			displayTime.textContent = `00:${seconds > 9 ? seconds : `0` + seconds}`;
+		if (seconds >= 0) {
+			let displayTime = document.querySelector('#time-left');
+			if (this.state.timeLeft === -1) {
+				displayTime.textContent = `00:00`;
+			} else {
+				displayTime.textContent = `00:${seconds > 9 ? seconds : `0` + seconds}`;
+			}
 		}
 	}
 
@@ -124,7 +127,7 @@ class App extends React.Component {
 		this.setState({
 			initialDuration: 20,
 			initialBreak: 10,
-			initialSet: 1,
+			initialSet: 0,
 			timeLeft: 0,
 			i: 0
 		});
@@ -134,41 +137,49 @@ class App extends React.Component {
 
 	render() {
 		return (
-			<div>
+			<div id="timer">
+				<h1>HIIT-Timer</h1>
 				<div>
 					<p>Sets</p>
-					<button onClick={this.handleSet} value="-">
+					<button id="change" onClick={this.handleSet} value="-">
 						-
 					</button>
 					<span>{this.state.initialSet}</span>
-					<button onClick={this.handleSet} value="+">
+					<button id="change" onClick={this.handleSet} value="+">
 						+
 					</button>
 				</div>
 				<div>
 					<p>Workout Duration</p>
-					<button onClick={this.handleDuration} value="-">
+					<button id="change" onClick={this.handleDuration} value="-">
 						-
 					</button>
 					<span>00:{this.state.initialDuration}</span>
-					<button onClick={this.handleDuration} value="+">
+					<button id="change" onClick={this.handleDuration} value="+">
 						+
 					</button>
 				</div>
 				<div>
 					<p>Rest</p>
-					<button onClick={this.handleBreak} value="-">
+					<button id="change" onClick={this.handleBreak} value="-">
 						-
 					</button>
 					<span>00:{this.state.initialBreak}</span>
-					<button onClick={this.handleBreak} value="+">
+					<button id="change" onClick={this.handleBreak} value="+">
 						+
 					</button>
 				</div>
-				<button onClick={this.handleStart}>Start</button>
-				<button onClick={this.handleInit}>Reset</button>
+				<div>
+					<button id="controls" onClick={this.handleStart}>
+						Start
+					</button>
+					<button id="controls" onClick={this.handleInit}>
+						Reset
+					</button>
+				</div>
+
 				<div id="display">
-					<h2>Work</h2>
+					<p>Work</p>
 					<div>{this.state.initialSet}</div>
 					<span id="time-left">00:00</span>
 				</div>
