@@ -9,7 +9,8 @@ class App extends React.Component {
 			initialDuration: 20,
 			initialBreak: 10,
 			initialSet: 0,
-			isRunning: false
+			isRunning: false,
+			control: 0
 		};
 		this.handleDuration = this.handleDuration.bind(this);
 		this.handleBreak = this.handleBreak.bind(this);
@@ -80,6 +81,8 @@ class App extends React.Component {
 				timeLeft = timeLeft - 1;
 				if (timeLeft < 0) {
 					clearInterval(countDown);
+					this.audioBeep.currentTime = 2;
+					this.audioBeep.play();
 					if (timeLeft === -1 && this.state.initialSet !== 0) {
 						this.handleSwitch();
 					}
@@ -90,18 +93,21 @@ class App extends React.Component {
 	}
 
 	handleSwitch() {
-		this.setState({
-			isRunning: true
-		});
-		bool = !bool;
-		if (!bool) {
-			timeLeft = this.state.initialBreak;
-			clearInterval(countDown);
-			this.handleStart();
-		} else {
-			timeLeft = this.state.initialDuration;
-			clearInterval(countDown);
-			this.handleStart();
+		if (this.state.initialSet > 0) {
+			bool = !bool;
+			this.setState({
+				isRunning: true,
+				control: bool
+			});
+			if (!bool) {
+				timeLeft = this.state.initialBreak;
+				clearInterval(countDown);
+				this.handleStart();
+			} else {
+				timeLeft = this.state.initialDuration;
+				clearInterval(countDown);
+				this.handleStart();
+			}
 		}
 	}
 
@@ -125,10 +131,13 @@ class App extends React.Component {
 			initialDuration: 20,
 			initialBreak: 10,
 			initialSet: 0,
-			isRunning: false
+			isRunning: false,
+			control: 0
 		});
 		let displayTime = document.querySelector('#time-left');
 		displayTime.textContent = `00:${this.state.initialDuration}`;
+		this.audioBeep.pause();
+		this.audioBeep.currentTime = 0;
 	}
 
 	render() {
@@ -151,7 +160,13 @@ class App extends React.Component {
 						<button id="change" onClick={this.handleDuration} value="-">
 							-
 						</button>
-						<span>00:{this.state.initialDuration}</span>
+						<span>
+							00:{this.state.initialDuration > 9 ? (
+								this.state.initialDuration
+							) : (
+								`0` + this.state.initialDuration
+							)}
+						</span>
 						<button id="change" onClick={this.handleDuration} value="+">
 							+
 						</button>
@@ -161,7 +176,9 @@ class App extends React.Component {
 						<button id="change" onClick={this.handleBreak} value="-">
 							-
 						</button>
-						<span>00:{this.state.initialBreak}</span>
+						<span>
+							00:{this.state.initialBreak > 9 ? this.state.initialBreak : `0` + this.state.initialBreak}
+						</span>
 						<button id="change" onClick={this.handleBreak} value="+">
 							+
 						</button>
@@ -176,7 +193,7 @@ class App extends React.Component {
 		} else {
 			return (
 				<div id="timer-display">
-					<h2>Work</h2>
+					<h2>{this.state.control ? `Work` : `Rest`}</h2>
 					<div id="display">
 						<div>{this.state.initialSet}</div>
 						<div id="time-left">00:00</div>
@@ -186,6 +203,14 @@ class App extends React.Component {
 							Reset
 						</button>
 					</div>
+					<audio
+						id="beep"
+						preload="auto"
+						src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1016174/ding2.mp3"
+						ref={(audio) => {
+							this.audioBeep = audio;
+						}}
+					/>
 				</div>
 			);
 		}

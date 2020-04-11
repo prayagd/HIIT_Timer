@@ -33,6 +33,10 @@ button:hover {
 	padding: 50px;
 }
 
+#timer h1 {
+	opacity: 0.5;
+}
+
 #controls {
 	border-radius: 50px;
 	padding: 15px 45px;
