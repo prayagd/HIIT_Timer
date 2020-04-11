@@ -4,37 +4,70 @@ body {
 		'Droid Sans', 'Helvetica Neue', sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	font-size: 20px;
 }
 
 #change {
-	border-radius: 5px;
+	border-radius: 50px;
 	padding: 10px 15px;
 	border: none;
 	margin: 0px 10px;
 	outline: none;
+	font-size: 15px;
 }
 
 button:hover {
-	background-color: blue;
+	background-color: grey;
 	color: white;
 }
 
 #timer {
+	margin-top: 15px;
+	margin-bottom: 15px;
 	display: flex-row;
-	max-width: 200px;
+	max-width: 220px;
 	margin-left: auto;
 	margin-right: auto;
 	text-align: center;
+	border: 5px solid grey;
+	padding: 50px;
 }
 
 #controls {
-	border-radius: 5px;
-	padding: 10px 15px;
+	border-radius: 50px;
+	padding: 15px 45px;
 	border: none;
 	margin: 10px 10px;
 	outline: none;
+	font-size: 15px;
 }
 
 #timer div {
 	margin-top: 25px;
+}
+
+#timer-display {
+	margin-top: 15px;
+	margin-bottom: 15px;
+	display: flex-row;
+	max-width: 220px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	border: 5px solid grey;
+	padding: 50px;
+}
+
+#time-left {
+	font-size: 30px;
+	margin: 30px 0px;
+}
+
+#display {
+	margin: 30px 0px;
+}
+
+#timer-display h2 {
+	font-size: 50px;
+	opacity: 0.2;
 }

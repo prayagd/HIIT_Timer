@@ -1,6 +1,7 @@
 import React from 'react';
-let countDown,
-	bool = true;
+let countDown = 0,
+	bool = false,
+	timeLeft = 0;
 class App extends React.Component {
 	constructor(props) {
 		super(props);
@@ -8,8 +9,7 @@ class App extends React.Component {
 			initialDuration: 20,
 			initialBreak: 10,
 			initialSet: 0,
-			timeLeft: 0,
-			i: 0
+			isRunning: false
 		};
 		this.handleDuration = this.handleDuration.bind(this);
 		this.handleBreak = this.handleBreak.bind(this);
@@ -69,43 +69,38 @@ class App extends React.Component {
 	}
 
 	handleStart(e) {
+		clearInterval(countDown);
 		if (this.state.initialSet > 0) {
-			console.log('Hello t');
-			if (this.state.i === 1) {
+			if (timeLeft === this.state.initialBreak) {
 				this.setState({
 					initialSet: this.state.initialSet - 1
 				});
 			}
-			let iterArray = [ this.state.initialDuration, this.state.initialBreak ];
-			this.setState({
-				timeLeft: iterArray[this.state.i]
-			});
 			countDown = setInterval(() => {
-				this.setState({
-					timeLeft: this.state.timeLeft - 1
-				});
-				if (this.state.timeLeft < 0) {
+				timeLeft = timeLeft - 1;
+				if (timeLeft < 0) {
 					clearInterval(countDown);
-					if (this.state.timeLeft === -1) {
+					if (timeLeft === -1 && this.state.initialSet !== 0) {
 						this.handleSwitch();
 					}
 				}
-				this.handleDisplay(this.state.timeLeft);
+				this.handleDisplay(timeLeft);
 			}, 1000);
 		}
 	}
 
 	handleSwitch() {
+		this.setState({
+			isRunning: true
+		});
 		bool = !bool;
 		if (!bool) {
-			this.setState({
-				i: 1
-			});
+			timeLeft = this.state.initialBreak;
+			clearInterval(countDown);
 			this.handleStart();
 		} else {
-			this.setState({
-				i: 0
-			});
+			timeLeft = this.state.initialDuration;
+			clearInterval(countDown);
 			this.handleStart();
 		}
 	}
@@ -122,69 +117,78 @@ class App extends React.Component {
 	}
 
 	handleInit(e) {
+		clearInterval(countDown);
+		bool = false;
+		timeLeft = 0;
 		countDown = 0;
-		bool = true;
 		this.setState({
 			initialDuration: 20,
 			initialBreak: 10,
 			initialSet: 0,
-			timeLeft: 0,
-			i: 0
+			isRunning: false
 		});
 		let displayTime = document.querySelector('#time-left');
 		displayTime.textContent = `00:${this.state.initialDuration}`;
 	}
 
 	render() {
-		return (
-			<div id="timer">
-				<h1>HIIT-Timer</h1>
-				<div>
-					<p>Sets</p>
-					<button id="change" onClick={this.handleSet} value="-">
-						-
-					</button>
-					<span>{this.state.initialSet}</span>
-					<button id="change" onClick={this.handleSet} value="+">
-						+
-					</button>
+		if (!this.state.isRunning) {
+			return (
+				<div id="timer">
+					<h1>HIIT-Timer</h1>
+					<div>
+						<p>Sets</p>
+						<button id="change" onClick={this.handleSet} value="-">
+							-
+						</button>
+						<span>{this.state.initialSet}</span>
+						<button id="change" onClick={this.handleSet} value="+">
+							+
+						</button>
+					</div>
+					<div>
+						<p>Workout Duration</p>
+						<button id="change" onClick={this.handleDuration} value="-">
+							-
+						</button>
+						<span>00:{this.state.initialDuration}</span>
+						<button id="change" onClick={this.handleDuration} value="+">
+							+
+						</button>
+					</div>
+					<div>
+						<p>Rest Duration</p>
+						<button id="change" onClick={this.handleBreak} value="-">
+							-
+						</button>
+						<span>00:{this.state.initialBreak}</span>
+						<button id="change" onClick={this.handleBreak} value="+">
+							+
+						</button>
+					</div>
+					<div>
+						<button id="controls" onClick={this.handleSwitch}>
+							Start
+						</button>
+					</div>
 				</div>
-				<div>
-					<p>Workout Duration</p>
-					<button id="change" onClick={this.handleDuration} value="-">
-						-
-					</button>
-					<span>00:{this.state.initialDuration}</span>
-					<button id="change" onClick={this.handleDuration} value="+">
-						+
-					</button>
+			);
+		} else {
+			return (
+				<div id="timer-display">
+					<h2>Work</h2>
+					<div id="display">
+						<div>{this.state.initialSet}</div>
+						<div id="time-left">00:00</div>
+					</div>
+					<div>
+						<button id="controls" onClick={this.handleInit}>
+							Reset
+						</button>
+					</div>
 				</div>
-				<div>
-					<p>Rest</p>
-					<button id="change" onClick={this.handleBreak} value="-">
-						-
-					</button>
-					<span>00:{this.state.initialBreak}</span>
-					<button id="change" onClick={this.handleBreak} value="+">
-						+
-					</button>
-				</div>
-				<div>
-					<button id="controls" onClick={this.handleStart}>
-						Start
-					</button>
-					<button id="controls" onClick={this.handleInit}>
-						Reset
-					</button>
-				</div>
-
-				<div id="display">
-					<p>Work</p>
-					<div>{this.state.initialSet}</div>
-					<span id="time-left">00:00</span>
-				</div>
-			</div>
-		);
+			);
+		}
 	}
 }
 
