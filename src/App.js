@@ -2,6 +2,7 @@ import React from 'react';
 let countDown = 0,
 	bool = false,
 	timeLeft = 0;
+
 class App extends React.Component {
 	constructor(props) {
 		super(props);
@@ -126,7 +127,6 @@ class App extends React.Component {
 		clearInterval(countDown);
 		bool = false;
 		timeLeft = 0;
-		countDown = 0;
 		this.setState({
 			initialDuration: 20,
 			initialBreak: 10,
@@ -195,7 +195,7 @@ class App extends React.Component {
 				<div id="timer-display">
 					<h2>{this.state.control ? `Work` : `Rest`}</h2>
 					<div id="display">
-						<div>{this.state.initialSet}</div>
+						<div id="sets">{this.state.initialSet}</div>
 						<div id="time-left">00:00</div>
 					</div>
 					<div>
@@ -206,6 +206,7 @@ class App extends React.Component {
 					<audio
 						id="beep"
 						preload="auto"
+						type="audio/mpeg"
 						src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1016174/ding2.mp3"
 						ref={(audio) => {
 							this.audioBeep = audio;

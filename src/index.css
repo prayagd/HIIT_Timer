@@ -63,8 +63,12 @@ button:hover {
 }
 
 #time-left {
-	font-size: 30px;
+	font-size: 90px;
 	margin: 30px 0px;
+}
+
+#sets {
+	font-size: 40px;
 }
 
 #display {
